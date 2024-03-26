@@ -63,7 +63,7 @@ const getStudentById = async (req, res) => {
     if (result.rowCount === 0) {
       res.status(404).json({
         message: `Student with id ${id} not found`,
-        isSuccess: true,
+        isSuccess: false,
       });
     } else {
       res
