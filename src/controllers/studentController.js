@@ -1,38 +1,34 @@
-const pool = require("../config/db");
+const { pool } = require("../config/db");
 
 //Tekil öğrenci oluşturma
 const createStudent = async (req, res) => {
   const query =
-    "INSERT INTO students (name, email, deptid, counter) VALUES ($1, $2, $3, $4)";
+    "INSERT INTO students (name, email, dept_id, counter) VALUES ($1, $2, $3, $4)";
 
   const getDepartmentByIdQuery = "SELECT * FROM departments WHERE id = $1";
   try {
-    const { name, email, deptid, counter } = req.body;
+    const { name, email, dept_id, counter } = req.body;
 
     const departmentResult = await pool.query(getDepartmentByIdQuery, [
-      Number(deptid),
+      Number(dept_id),
     ]);
     if (departmentResult.rowCount === 0) {
       res.status(404).json({
-        message: `Department with id ${deptid} not found`,
+        message: `Department with id ${dept_id} not found`,
         isSuccess: false,
       });
     } else {
       const result = await pool.query(query, [
         name,
         email,
-        Number(deptid),
+        Number(dept_id),
         Number(counter),
       ]);
 
-      res
-        .status(201)
-        .json({ data: result.rows, message: "success", isSuccess: true });
+      res.status(201).json({ message: "success", isSuccess: true });
     }
   } catch (err) {
-    res
-      .status(500)
-      .json({ message: err.message, message: err.message, isSuccess: false });
+    res.status(500).json({ message: err.message, isSuccess: false });
     console.log(err);
   }
 };
@@ -46,9 +42,7 @@ const getStudents = async (req, res) => {
       .status(200)
       .json({ data: result.rows, message: "success", isSuccess: true });
   } catch (err) {
-    res
-      .status(500)
-      .json({ message: err.message, message: err.message, isSuccess: false });
+    res.status(500).json({ message: err.message, isSuccess: false });
     console.log(err);
   }
 };
@@ -63,7 +57,7 @@ const getStudentById = async (req, res) => {
     if (result.rowCount === 0) {
       res.status(404).json({
         message: `Student with id ${id} not found`,
-        isSuccess: true,
+        isSuccess: false,
       });
     } else {
       res
@@ -71,9 +65,7 @@ const getStudentById = async (req, res) => {
         .json({ data: result.rows[0], message: "success", isSuccess: true });
     }
   } catch (err) {
-    res
-      .status(500)
-      .json({ message: err.message, message: err.message, isSuccess: false });
+    res.status(500).json({ message: err.message, isSuccess: false });
     console.log(err);
   }
 };
@@ -85,7 +77,7 @@ const updateStudent = async (req, res) => {
   const getStudentByIdQuery = "SELECT * FROM students WHERE id = $1";
   try {
     const { id } = req.params;
-    const { name, email, deptid, counter } = req.body;
+    const { name, email, dept_id, counter } = req.body;
 
     const getStudentByIdResult = await pool.query(getStudentByIdQuery, [
       Number(id),
@@ -98,13 +90,11 @@ const updateStudent = async (req, res) => {
       const result = await pool.query(query, [
         name,
         email,
-        Number(deptid),
+        Number(dept_id),
         Number(counter),
         Number(id),
       ]);
-      res
-        .status(200)
-        .json({ data: result.rows, message: "success", isSuccess: true });
+      res.status(200).json({ message: "success", isSuccess: true });
     }
   } catch (err) {
     res.status(500).json({ message: err.message, isSuccess: false });
@@ -128,7 +118,6 @@ const removeStudent = async (req, res) => {
     } else {
       const result = await pool.query(query, [Number(id)]);
       res.status(200).json({
-        data: result.rows,
         message: `Student with id ${id} successfully removed`,
         isSuccess: true,
       });
