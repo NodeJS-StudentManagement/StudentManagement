@@ -1,4 +1,4 @@
-const pool = require("../config/db");
+const { pool } = require("../config/db");
 
 // Tekil departman oluşturma
 const createDepartment = async (req, res) => {
@@ -6,13 +6,9 @@ const createDepartment = async (req, res) => {
   try {
     const { name } = req.body;
     const result = await pool.query(query, [name]);
-    res
-      .send(201)
-      .json({ data: result.rows, message: "success", isSuccess: true });
+    res.status(201).json({ message: "success", isSuccess: true });
   } catch (err) {
-    res
-      .status(500)
-      .json({ message: err.message, message: err.message, isSuccess: false });
+    res.status(500).json({ message: err.message, isSuccess: false });
     console.log(err);
   }
 };
@@ -26,9 +22,7 @@ const getDepartments = async (req, res) => {
       .status(200)
       .json({ data: result.rows, message: "success", isSuccess: true });
   } catch (err) {
-    res
-      .status(500)
-      .json({ message: err.message, message: err.message, isSuccess: false });
+    res.status(500).json({ message: err.message, isSuccess: false });
     console.log(err);
   }
 };
@@ -40,19 +34,17 @@ const getDepartmentById = async (req, res) => {
     const { id } = req.params;
     const result = await pool.query(query, [id]);
     if (result.rowCount === 0) {
-      res.send(404).json({
+      res.status(404).json({
         message: `Department with id ${id} not found`,
         isSuccess: true,
       });
     } else {
       res
-        .send(200)
+        .status(200)
         .json({ data: result.rows, message: "success", isSuccess: true });
     }
   } catch (err) {
-    res
-      .status(500)
-      .json({ message: err.message, message: err.message, isSuccess: false });
+    res.status(500).json({ message: err.message, isSuccess: false });
     console.log(err);
   }
 };
@@ -74,7 +66,6 @@ const removeDepartment = async (req, res) => {
     } else {
       const result = await pool.query(query, [Number(id)]);
       res.status(200).json({
-        data: result.rows,
         message: `Department with id ${id} successfully removed`,
         isSuccess: true,
       });
@@ -103,7 +94,6 @@ const updateDepartment = async (req, res) => {
     } else {
       const result = await pool.query(query, [name, Number(id)]);
       res.status(200).json({
-        data: result.rows,
         message: "success",
         isSuccess: true,
       });

@@ -15,3 +15,5 @@ router
   .get(getDepartmentById)
   .put(updateDepartment)
   .delete(removeDepartment);
+
+module.exports = router;
