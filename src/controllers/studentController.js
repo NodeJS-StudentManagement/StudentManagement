@@ -3,25 +3,35 @@ const { pool } = require("../config/db");
 //Tekil öğrenci oluşturma
 const createStudent = async (req, res) => {
   const query =
-    "INSERT INTO students (name, email, dept_id, counter) VALUES ($1, $2, $3, $4)";
+    "INSERT INTO students (name, email, deptid, counter) VALUES ($1, $2, $3, $4)";
 
+  const getStudentByDepartmentIdQuery =
+    "SELECT * FROM students WHERE deptid = $1";
   const getDepartmentByIdQuery = "SELECT * FROM departments WHERE id = $1";
   try {
-    const { name, email, dept_id, counter } = req.body;
-
+    const { name, email, deptid, counter } = req.body;
+    const getStudentByDepartmentIdResult = await pool.query(
+      getStudentByDepartmentIdQuery,
+      [Number(deptid)]
+    );
     const departmentResult = await pool.query(getDepartmentByIdQuery, [
-      Number(dept_id),
+      Number(deptid),
     ]);
     if (departmentResult.rowCount === 0) {
       res.status(404).json({
-        message: `Department with id ${dept_id} not found`,
+        message: `Department with id ${deptid} not found`,
+        isSuccess: false,
+      });
+    } else if (getStudentByDepartmentIdResult.rowCount !== 0) {
+      res.status(404).json({
+        message: `Department with id ${deptid} already has a student`,
         isSuccess: false,
       });
     } else {
       const result = await pool.query(query, [
         name,
         email,
-        Number(dept_id),
+        Number(deptid),
         Number(counter),
       ]);
 
@@ -77,7 +87,7 @@ const updateStudent = async (req, res) => {
   const getStudentByIdQuery = "SELECT * FROM students WHERE id = $1";
   try {
     const { id } = req.params;
-    const { name, email, dept_id, counter } = req.body;
+    const { name, email, deptid, counter } = req.body;
 
     const getStudentByIdResult = await pool.query(getStudentByIdQuery, [
       Number(id),
@@ -90,7 +100,7 @@ const updateStudent = async (req, res) => {
       const result = await pool.query(query, [
         name,
         email,
-        Number(dept_id),
+        Number(deptid),
         Number(counter),
         Number(id),
       ]);
