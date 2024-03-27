@@ -15,21 +15,22 @@ const createTables = async () => {
     id SERIAL PRIMARY KEY,
     name VARCHAR(50),
     email VARCHAR(50),
-    dept_id INT,
+    deptid INT REFERENCES departments(id) ON DELETE SET NULL ON UPDATE CASCADE DEFAULT NULL,
     counter INT DEFAULT 0, 
   )`;
 
   const departmentTableQuery = `CREATE TABLE IF NOT EXISTS departments(
     id SERIAL PRIMARY KEY,
     name VARCHAR(100),
-    std_id INT,
+    dept_std_id INT UNIQUE,
   )`;
+
   try {
     const client = await pool.connect();
     await client.query("BEGIN");
 
-    await client.query(studentTableQuery);
     await client.query(departmentTableQuery);
+    await client.query(studentTableQuery);
 
     await client.query("COMMIT");
   } catch (err) {

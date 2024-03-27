@@ -8,7 +8,6 @@ const studentRoute = require("./routes/studentRoute");
 const departmentRoute = require("./routes/departmentRoute");
 
 app.use(express.json()); // req.body'yi kullanabilmek için middleware tanımladık
-app.use(express.urlencoded({ extended: false }));
 
 app.use("/api/v1/students", studentRoute);
 app.use("/api/v1/departments", departmentRoute);
