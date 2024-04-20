@@ -3,13 +3,13 @@ const { pool } = require("../config/db");
 //Tekil öğrenci oluşturma
 const createStudent = async (req, res) => {
   const query =
-    "INSERT INTO students (name, email, deptid, counter) VALUES ($1, $2, $3, $4)";
+    "INSERT INTO students (name, email, deptid) VALUES ($1, $2, $3)";
 
   const getStudentByDepartmentIdQuery =
     "SELECT * FROM students WHERE deptid = $1";
   const getDepartmentByIdQuery = "SELECT * FROM departments WHERE id = $1";
   try {
-    const { name, email, deptid, counter } = req.body;
+    const { name, email, deptid } = req.body;
     const getStudentByDepartmentIdResult = await pool.query(
       getStudentByDepartmentIdQuery,
       [Number(deptid)]
@@ -28,12 +28,7 @@ const createStudent = async (req, res) => {
         isSuccess: false,
       });
     } else {
-      const result = await pool.query(query, [
-        name,
-        email,
-        Number(deptid),
-        Number(counter),
-      ]);
+      const result = await pool.query(query, [name, email, Number(deptid)]);
 
       res.status(201).json({ message: "success", isSuccess: true });
     }
@@ -83,11 +78,11 @@ const getStudentById = async (req, res) => {
 //Öğrenci bilgisini güncelleme
 const updateStudent = async (req, res) => {
   const query =
-    "UPDATE students SET name = $1, email = $2, deptid = $3, counter = $4 WHERE id = $5";
+    "UPDATE students SET name = $1, email = $2, deptid = $3 WHERE id = $5";
   const getStudentByIdQuery = "SELECT * FROM students WHERE id = $1";
   try {
     const { id } = req.params;
-    const { name, email, deptid, counter } = req.body;
+    const { name, email, deptid } = req.body;
 
     const getStudentByIdResult = await pool.query(getStudentByIdQuery, [
       Number(id),
@@ -101,7 +96,6 @@ const updateStudent = async (req, res) => {
         name,
         email,
         Number(deptid),
-        Number(counter),
         Number(id),
       ]);
       res.status(200).json({ message: "success", isSuccess: true });

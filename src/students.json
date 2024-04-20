@@ -1,0 +1,20 @@
+[
+ {
+  "id": 2,
+  "name": "Berkan Serbes",
+  "email": "berkanserbes3@gmail.com",
+  "deptid": 1
+ },
+ {
+  "id": 3,
+  "name": "Serdar Ayvalı",
+  "email": "serdarayvali@gmail.com",
+  "deptid": 2
+ },
+ {
+  "id": 4,
+  "name": "Emirhan Sesigür",
+  "email": "emirhansesigur@gmail.com",
+  "deptid": 3
+ }
+]
