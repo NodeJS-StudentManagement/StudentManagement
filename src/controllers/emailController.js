@@ -1,9 +1,10 @@
-const { sendMail } = require("../config/email");
+const { sendMail, scheduleSendMail } = require("../config/email");
 
 const sendStudentList = async (req, res) => {
   try {
-    await sendMail();
-    console.log("Eposta gönderildi");
+    await sendMail(); // istek atıldığında doğrudan eposta gönderme işlemi, eğer bu konulmazsa email göndermeye 7 gün sonra başlar.
+    scheduleSendMail();
+
     res.status(200).json({ message: "Successfull", isSuccess: true });
   } catch (err) {
     console.log(err);
