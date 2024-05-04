@@ -3,7 +3,7 @@ const { pool } = require("../config/db");
 //Tekil öğrenci oluşturma
 const createStudent = async (req, res) => {
   const query =
-    "INSERT INTO students (name, email, deptid) VALUES ($1, $2, $3)";
+    "INSERT INTO students (name, email, deptid, updated_at) VALUES ($1, $2, $3, $4) RETURNING *";
 
   const getStudentByDepartmentIdQuery =
     "SELECT * FROM students WHERE deptid = $1";
@@ -28,9 +28,19 @@ const createStudent = async (req, res) => {
         isSuccess: false,
       });
     } else {
-      const result = await pool.query(query, [name, email, Number(deptid)]);
+      const currentTime = new Date().toISOString();
+      const result = await pool.query(query, [
+        name,
+        email,
+        Number(deptid),
+        currentTime,
+      ]);
 
-      res.status(201).json({ message: "success", isSuccess: true });
+      res.status(201).json({
+        Data: { created_at: result.rows[0].created_at },
+        message: "success",
+        isSuccess: true,
+      });
     }
   } catch (err) {
     res.status(500).json({ message: err.message, isSuccess: false });
@@ -78,7 +88,7 @@ const getStudentById = async (req, res) => {
 //Öğrenci bilgisini güncelleme
 const updateStudent = async (req, res) => {
   const query =
-    "UPDATE students SET name = $1, email = $2, deptid = $3 WHERE id = $5";
+    "UPDATE students SET name = $1, email = $2, deptid = $3, updated_at = $4 WHERE id = $5 RETURNING *";
   const getStudentByIdQuery = "SELECT * FROM students WHERE id = $1";
   try {
     const { id } = req.params;
@@ -92,13 +102,19 @@ const updateStudent = async (req, res) => {
         .status(404)
         .json({ message: `Student with id ${id} not found`, isSuccess: false });
     } else {
+      const currentTime = new Date().toISOString();
       const result = await pool.query(query, [
         name,
         email,
         Number(deptid),
+        currentTime,
         Number(id),
       ]);
-      res.status(200).json({ message: "success", isSuccess: true });
+      res.status(200).json({
+        updated_at: result.rows[0].updated_at,
+        message: "success",
+        isSuccess: true,
+      });
     }
   } catch (err) {
     res.status(500).json({ message: err.message, isSuccess: false });
