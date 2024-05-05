@@ -15,17 +15,23 @@ const createTables = async () => {
     id SERIAL PRIMARY KEY,
     name VARCHAR(50),
     email VARCHAR(50),
-    deptid INT REFERENCES departments(id) ON DELETE SET NULL ON UPDATE CASCADE DEFAULT NULL
+    deptid INT REFERENCES departments(id) ON DELETE SET NULL ON UPDATE CASCADE DEFAULT NULL,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
   )`;
 
   const departmentTableQuery = `CREATE TABLE IF NOT EXISTS departments(
     id SERIAL PRIMARY KEY,
     name VARCHAR(100),
-    dept_std_id INT UNIQUE
+    dept_std_id INT UNIQUE,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
   )`;
 
   const studentCounterTableQuery = `CREATE TABLE IF NOT EXISTS student_counter(
-    counter INT DEFAULT 0
+    counter INT DEFAULT 0,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
   )`;
 
   const insertCounterQuery =
@@ -38,6 +44,11 @@ const createTables = async () => {
     client = await pool.connect();
     await client.query("BEGIN");
 
+    var timezoneResult = await client.query("SHOW timezone");
+    console.log(timezoneResult.rows[0]);
+    if (timezoneResult.rows[0].TimeZone !== "Europe/Istanbul") {
+      await client.query("SET timezone = 'Europe/Istanbul'");
+    }
     await client.query(departmentTableQuery);
     await client.query(studentTableQuery);
     await client.query(studentCounterTableQuery);
