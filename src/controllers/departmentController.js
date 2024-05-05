@@ -4,9 +4,21 @@ const { pool } = require("../config/db");
 const createDepartment = async (req, res) => {
   const query =
     "INSERT INTO departments (name, updated_at) VALUES ($1, $2) RETURNING *";
+  const getDepartmentsByNameQuery = "SELECT * FROM departments WHERE name = $1";
   try {
     const { name } = req.body;
     const currentTime = new Date().toISOString();
+
+    const getDepartmentsByNameResult = await pool.query(
+      getDepartmentsByNameQuery,
+      [name]
+    );
+    if (getDepartmentsByNameResult.rowCount !== 0) {
+      return res.status(404).json({
+        message: `Department with name ${name} already exists`,
+        isSuccess: false,
+      });
+    }
     const result = await pool.query(query, [name, currentTime]);
     res.status(201).json({
       Data: { created_at: result.rows[0].created_at },
@@ -59,6 +71,8 @@ const getDepartmentById = async (req, res) => {
 const removeDepartment = async (req, res) => {
   const getDepartmentByIdQuery = "SELECT * FROM departments WHERE id = $1";
   const query = "DELETE FROM departments WHERE id = $1";
+  const updateStudentTableQuery =
+    "UPDATE students SET deptid = NULL, updated_at = $1 WHERE deptid = $2";
   try {
     const { id } = req.params;
     const getDepartmentByIdResult = await pool.query(getDepartmentByIdQuery, [
@@ -70,7 +84,9 @@ const removeDepartment = async (req, res) => {
         isSuccess: false,
       });
     } else {
+      const currentTime = new Date().toISOString();
       const result = await pool.query(query, [Number(id)]);
+      await pool.query(updateStudentTableQuery, [currentTime, Number(id)]);
       res.status(200).json({
         message: `Department with id ${id} successfully removed`,
         isSuccess: true,
