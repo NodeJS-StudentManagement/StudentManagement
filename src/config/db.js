@@ -34,6 +34,14 @@ const createTables = async () => {
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
   )`;
 
+  const userTableQuery = `CREATE TABLE IF NOT EXISTS users(
+    id SERIAL PRIMARY KEY,
+    username VARCHAR(50),
+    password VARCHAR(200),
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+  )`;
+
   const insertCounterQuery =
     "INSERT INTO student_counter (counter) VALUES ($1)";
 
@@ -49,6 +57,7 @@ const createTables = async () => {
     if (timezoneResult.rows[0].TimeZone !== "Europe/Istanbul") {
       await client.query("SET timezone = 'Europe/Istanbul'");
     }
+    await client.query(userTableQuery);
     await client.query(departmentTableQuery);
     await client.query(studentTableQuery);
     await client.query(studentCounterTableQuery);
