@@ -103,7 +103,8 @@ const updateStudent = async (req, res) => {
   const query =
     "UPDATE students SET name = $1, email = $2, deptid = $3, updated_at = $4 WHERE id = $5 RETURNING *";
 
-  const updateDepartmentTableQuery = `UPDATE departments SET updated_at = $1, dept_std_id = $2 WHERE id = $3`;
+  const updateNewDepartmentTableQuery = `UPDATE departments SET updated_at = $1, dept_std_id = $2 WHERE id = $3`;
+  const updateOldDepartmentTableQuery = `UPDATE departments SET updated_at = $1, dept_std_id = NULL WHERE dept_std_id = $2`;
   const getStudentByIdQuery = "SELECT * FROM students WHERE id = $1";
   const getDepartmentByIdQuery = "SELECT * FROM departments WHERE id = $1";
   const isDepartmentHasStudentQuery =
@@ -136,13 +137,13 @@ const updateStudent = async (req, res) => {
         isSuccess: false,
       });
     } else if (isDepartmentHasStudent.rows[0].dept_std_id !== null) {
-      console.log(isDepartmentHasStudent);
       res.status(404).json({
         message: `Department with id ${deptid} already has a student`,
         isSuccess: false,
       });
     } else {
       const currentTime = new Date().toISOString();
+
       const result = await pool.query(query, [
         name,
         email,
@@ -150,7 +151,14 @@ const updateStudent = async (req, res) => {
         currentTime,
         Number(id),
       ]);
-      await pool.query(updateDepartmentTableQuery, [
+      // Eski departmanda dept_std_id'yi null yap
+      await pool.query(updateOldDepartmentTableQuery, [
+        currentTime,
+        Number(id),
+      ]);
+
+      // Yeni departmanda dept_std_id'yi güncelle
+      await pool.query(updateNewDepartmentTableQuery, [
         currentTime,
         Number(id),
         Number(deptid),

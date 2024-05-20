@@ -1,20 +1,18 @@
 [
  {
-  "id": 2,
-  "name": "Berkan Serbes",
-  "email": "berkanserbes3@gmail.com",
-  "deptid": 1
- },
- {
   "id": 3,
-  "name": "Serdar Ayvalı",
-  "email": "serdarayvali@gmail.com",
-  "deptid": 2
+  "name": "User11",
+  "email": "user110@gmail.com",
+  "deptid": 2,
+  "created_at": "2024-05-06T17:10:28.749Z",
+  "updated_at": "2024-05-06T17:10:28.748Z"
  },
  {
-  "id": 4,
-  "name": "Emirhan Sesigür",
-  "email": "emirhansesigur@gmail.com",
-  "deptid": 3
+  "id": 2,
+  "name": "User3",
+  "email": "berkan4@gmail.com",
+  "deptid": 4,
+  "created_at": "2024-05-06T17:10:18.487Z",
+  "updated_at": "2024-05-06T17:11:25.223Z"
  }
 ]

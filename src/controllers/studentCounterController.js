@@ -8,15 +8,13 @@ Son olarak student_counter tablosundaki verileri döndürür.
 const getStudentCounter = async (req, res) => {
   const studentCounterQuery = "SELECT * FROM student_counter"; // student_counter tablosundaki counter değerini döndürür
   const studentRowCountQuery = "SELECT COUNT(id) FROM students"; // students tablosundaki öğrenci sayısını döndürür
-  const updateStudentCounterQuery =
-    "UPDATE student_counter SET counter = $1, updated_at = $2"; // student_counter tablosundaki counter değerini günceller
+  const updateStudentCounterQuery = "UPDATE student_counter SET counter = $1"; // student_counter tablosundaki counter değerini günceller
   try {
     const studentRowCount = await pool.query(studentRowCountQuery);
     if (studentRowCount.rows[0].count > 0) {
-      const currentTime = new Date().toISOString();
+      //const currentTime = new Date().toISOString();
       const updateStudentCounter = await pool.query(updateStudentCounterQuery, [
         studentRowCount.rows[0].count,
-        currentTime,
       ]);
     } else {
       const currentTime = new Date().toISOString();
