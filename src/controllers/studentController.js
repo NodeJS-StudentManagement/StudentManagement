@@ -143,6 +143,7 @@ const updateStudent = async (req, res) => {
       });
     } else {
       const currentTime = new Date().toISOString();
+
       const result = await pool.query(query, [
         name,
         email,
