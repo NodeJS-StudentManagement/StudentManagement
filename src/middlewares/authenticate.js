@@ -6,16 +6,18 @@ const authenticateMiddleware = (req, res, next) => {
   if (authHeader == null) {
     return res.status(401).json({ message: "Access token is missing" });
   }
-  if (authHeader.startsWith("Bearer")) {
-    const token = authHeader && authHeader.split(" ")[1];
-    jwt.verify(token, process.env.JWT_SECRET, (err, user) => {
-      if (err) {
-        return res.status(403).json({ message: "Invalid token" });
-      }
-      req.user = user;
-      next();
-    });
+  if (!authHeader.startsWith("Bearer")) {
+    return res.status(403).json({ message: "bearer is missing" });
   }
+
+  const token = authHeader && authHeader.split(" ")[1];
+  jwt.verify(token, process.env.JWT_SECRET, (err, user) => {
+    if (err) {
+      return res.status(403).json({ message: "Invalid token" });
+    }
+    req.user = user;
+    next();
+  });
 };
 
 module.exports = authenticateMiddleware;
