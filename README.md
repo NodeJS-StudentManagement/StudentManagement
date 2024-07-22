@@ -56,6 +56,8 @@ To run the project locally, follow these steps:
 - Node.js (>=14.0.0)
 - npm
 
+<hr/>
+
 ### Auth Endpoints
 
 | Endpoint               | Method  | Parameters| Description |
